@@ -16,20 +16,33 @@ uv tool uninstall run-agent                                 # remove
 
 ## Run
 
-```sh
-run-agent <agent> "<prompt>"                 # run the prompt
-run-agent <agent> - < prompt.md              # read the prompt from stdin
-run-agent <agent> --model <model> "<prompt>" # pick a model
-run-agent <agent> --effort high "<prompt>"   # pick a reasoning effort
-run-agent <agent> --yolo "<prompt>"          # skip every permission check and sandbox
-run-agent --version
-```
-
 `<agent>` is `claude`, `codex` or `agy`. The agent's final answer goes to stdout and its progress to stderr. The exit code is the agent's.
 
-## Permissions
+### Run a task
 
-The agent works in the current directory: it may edit files and run sandboxed commands there, and anything else that needs approval is denied. `--yolo` lifts every check and sandbox, so the agent can do anything your account can.
+```sh
+run-agent <agent> --model <model> --effort <effort> "<prompt>"
+```
+
+`--model` and `--effort` are optional and default to the agent's own; `<effort>` is `low`, `medium`, `high`, `xhigh` or `max`.
+
+The agent works in the current directory: it may edit files and run sandboxed commands there, and anything else that needs approval is denied.
+
+### Run a task from a file
+
+```sh
+run-agent <agent> - < TASK.md
+```
+
+With `-`, the prompt comes from stdin. Keep a recurring task, or one too long to quote on the command line, in a file and run it whenever you need it.
+
+### Run without restrictions
+
+```sh
+run-agent <agent> --yolo "<prompt>"
+```
+
+`--yolo` lifts every permission check and sandbox, so the agent can do anything your account can.
 
 ## Develop
 

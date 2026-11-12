@@ -22,25 +22,25 @@ def invoke(task):
 
 class InvokeTest(unittest.TestCase):
     def test_run(self):
-        self.assertEqual(invoke(Task("fix the tests")), [
-            f"--print={HEADLESS}\n\nfix the tests",
+        self.assertEqual(invoke(Task("say hello")), [
+            f"--print={HEADLESS}\n\nsay hello",
             "--mode", "accept-edits",
             "--sandbox",
             "--settings", json.dumps({"permissions": {"allow": ["command(*)"]}}),
         ])
 
     def test_yolo(self):
-        args = invoke(Task("fix the tests", yolo=True))
+        args = invoke(Task("say hello", yolo=True))
 
         self.assertEqual(args[1:], ["--dangerously-skip-permissions"])
 
     def test_model(self):
-        args = invoke(Task("fix the tests", model="gemini-3-flash-medium"))
+        args = invoke(Task("say hello", model="gemini-3-flash-medium"))
 
         self.assertEqual(args[-2:], ["--model", "gemini-3-flash-medium"])
 
     def test_effort(self):
-        args = invoke(Task("fix the tests", effort=Effort.LOW))
+        args = invoke(Task("say hello", effort=Effort.LOW))
 
         self.assertEqual(args[-2:], ["--effort", "low"])
 

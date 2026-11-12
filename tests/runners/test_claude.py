@@ -20,27 +20,27 @@ def invoke(task):
 
 class InvokeTest(unittest.TestCase):
     def test_run(self):
-        self.assertEqual(invoke(Task("fix the tests")), ([
+        self.assertEqual(invoke(Task("say hello")), ([
             "--print",
             "--append-system-prompt", HEADLESS,
             "--no-session-persistence",
             "--permission-prompts", "none",
             "--permission-mode", "auto",
-        ], "fix the tests"))
+        ], "say hello"))
 
     def test_yolo(self):
-        args, _ = invoke(Task("fix the tests", yolo=True))
+        args, _ = invoke(Task("say hello", yolo=True))
 
         self.assertIn("--dangerously-skip-permissions", args)
         self.assertNotIn("--permission-mode", args)
 
     def test_model(self):
-        args, _ = invoke(Task("fix the tests", model="haiku"))
+        args, _ = invoke(Task("say hello", model="haiku"))
 
         self.assertEqual(args[-2:], ["--model", "haiku"])
 
     def test_effort(self):
-        args, _ = invoke(Task("fix the tests", effort=Effort.HIGH))
+        args, _ = invoke(Task("say hello", effort=Effort.HIGH))
 
         self.assertEqual(args[-2:], ["--effort", "high"])
 

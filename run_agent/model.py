@@ -1,11 +1,11 @@
-"""The model shared by the app and runners: a task and its outcome."""
+"""The model shared by the app and runners."""
 
 from dataclasses import dataclass
 from enum import StrEnum
 
 
 class Effort(StrEnum):
-    """How hard the model reasons: the levels every agent supports."""
+    """Effort level."""
 
     LOW = "low"
     MEDIUM = "medium"
@@ -26,7 +26,7 @@ class Task:
 
 @dataclass
 class Outcome:
-    """What the run of a task returned."""
+    """What the run returned."""
 
     output: str  # the agent's final answer, as printed
     code: int  # the run's exit code: the CLI's, unless its runner detects a failure the CLI doesn't report

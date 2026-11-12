@@ -6,8 +6,7 @@ from ..instructions import HEADLESS
 from ..model import Outcome
 from .cli import run
 
-# Sandboxed commands are allowed, as Codex's workspace-write sandbox allows them; without the rule,
-# headless mode auto-denies them.
+# Allow sandboxed commands; without the rule, headless mode auto-denies them.
 WORKSPACE_SETTINGS = {"permissions": {"allow": ["command(*)"]}}
 
 
@@ -16,7 +15,7 @@ class Antigravity:
 
     def run(self, task):
         """Run the task with `agy --print`"""
-        # agy has no system-prompt channel and doesn't read the prompt from stdin.
+        # agy has no system-prompt channel and doesn't read stdin, so the instructions precede the prompt.
         args = [f"--print={HEADLESS}\n\n{task.prompt}"]
         if task.yolo:
             args.append("--dangerously-skip-permissions")

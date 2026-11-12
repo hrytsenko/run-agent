@@ -22,7 +22,7 @@ def invoke(task):
 
 class InvokeTest(unittest.TestCase):
     def test_run(self):
-        self.assertEqual(invoke(Task("fix the tests")), ([
+        self.assertEqual(invoke(Task("say hello")), ([
             "exec",
             "--config", f"developer_instructions={json.dumps(HEADLESS)}",
             "--skip-git-repo-check",
@@ -31,29 +31,29 @@ class InvokeTest(unittest.TestCase):
             "--sandbox", "workspace-write",
             "--config", 'approval_policy="never"',
             "-",
-        ], "fix the tests"))
+        ], "say hello"))
 
     def test_instructions(self):
-        args, _ = invoke(Task("fix the tests"))
+        args, _ = invoke(Task("say hello"))
         config = args[args.index("--config") + 1]
 
         self.assertNotIn("\n", config)
         self.assertEqual(tomllib.loads(config), {"developer_instructions": HEADLESS})
 
     def test_yolo(self):
-        args, _ = invoke(Task("fix the tests", yolo=True))
+        args, _ = invoke(Task("say hello", yolo=True))
 
         self.assertIn("--dangerously-bypass-approvals-and-sandbox", args)
         self.assertNotIn("--sandbox", args)
         self.assertNotIn('approval_policy="never"', args)
 
     def test_model(self):
-        args, _ = invoke(Task("fix the tests", model="gpt-5-luna"))
+        args, _ = invoke(Task("say hello", model="gpt-5-luna"))
 
         self.assertEqual(args[-3:], ["--model", "gpt-5-luna", "-"])
 
     def test_effort(self):
-        args, _ = invoke(Task("fix the tests", effort=Effort.XHIGH))
+        args, _ = invoke(Task("say hello", effort=Effort.XHIGH))
 
         self.assertEqual(args[-3:], ["--config", 'model_reasoning_effort="xhigh"', "-"])
 
