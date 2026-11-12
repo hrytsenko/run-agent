@@ -6,8 +6,6 @@ from .cli import run
 
 
 class Claude:
-    NAME = "Claude Code"
-
     def run(self, task):
         """Run the task with `claude --print`"""
         args = [

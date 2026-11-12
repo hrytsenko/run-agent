@@ -24,6 +24,7 @@ def main():
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     args = parser.parse_args()
 
+    sys.stdin.reconfigure(encoding="utf-8")
     sys.stdout.reconfigure(encoding="utf-8")
 
     prompt = sys.stdin.read() if args.prompt == "-" else args.prompt

@@ -24,11 +24,11 @@ class Runner:
 
 
 def run(*args, runner=None, stdin=""):
-    """Run the app with args, `claude` as runner and stdin; return its exit code, stdout and stderr."""
+    """Run the app with args. Return its exit code, stdout and stderr."""
     stdout, stderr = io.TextIOWrapper(io.BytesIO(), encoding="utf-8", newline=""), io.StringIO()
     with (
         mock.patch.object(sys, "argv", ["run-agent", *args]),
-        mock.patch.object(sys, "stdin", io.StringIO(stdin)),
+        mock.patch.object(sys, "stdin", io.TextIOWrapper(io.BytesIO(stdin.encode()), encoding="utf-8")),
         mock.patch.dict("run_agent.app.RUNNERS", {"claude": runner}),
         contextlib.redirect_stdout(stdout),
         contextlib.redirect_stderr(stderr),

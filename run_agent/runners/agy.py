@@ -11,8 +11,6 @@ WORKSPACE_SETTINGS = {"permissions": {"allow": ["command(*)"]}}
 
 
 class Antigravity:
-    NAME = "Antigravity"
-
     def run(self, task):
         """Run the task with `agy --print`"""
         # agy has no system-prompt channel and doesn't read stdin, so the instructions precede the prompt.

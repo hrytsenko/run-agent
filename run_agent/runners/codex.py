@@ -8,8 +8,6 @@ from .cli import run
 
 
 class Codex:
-    NAME = "Codex"
-
     def run(self, task):
         """Run the task with `codex exec`, the prompt on stdin and the headless instructions as developer instructions."""
         args = [

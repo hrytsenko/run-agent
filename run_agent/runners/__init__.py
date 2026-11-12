@@ -1,6 +1,6 @@
 """Agent runners, one per agent CLI.
 
-Each has a `NAME` and a `run(task)` that runs a `Task` headless and returns an `Outcome`.
+Each has a `run(task)` that runs a `Task` headless and returns an `Outcome`.
 `RUNNERS` maps each CLI name, as given on the command line, to its runner.
 """
 
