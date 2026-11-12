@@ -1,0 +1,24 @@
+[project]
+name = "run-agent"
+description = "Run a prompt through the Claude Code, Codex or Antigravity CLI in headless mode."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = []
+dynamic = ["version"]
+
+[project.urls]
+Repository = "https://github.com/hrytsenko/run-agent"
+
+[project.scripts]
+run-agent = "run_agent.app:main"
+
+[dependency-groups]
+dev = ["ruff==0.16.8"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "run_agent/__init__.py"
