@@ -47,7 +47,9 @@ run-agent <agent> --yolo "<prompt>"
 ## Develop
 
 ```sh
-uv run ruff check           # lint
-uv run python -m unittest   # test
-uv run python -m run_agent  # run
+uv run ruff check                 # lint
+uv run python -m unittest         # test
+uv run python -m run_agent        # run
+uv run pre-commit install         # install hooks
+uv run pre-commit run --all-files # run hooks
 ```

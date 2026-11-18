@@ -14,7 +14,7 @@ Repository = "https://github.com/hrytsenko/run-agent"
 run-agent = "run_agent.app:main"
 
 [dependency-groups]
-dev = ["ruff==0.16.8"]
+dev = ["pre-commit==4.7.0", "ruff==0.16.8"]
 
 [build-system]
 requires = ["hatchling"]
