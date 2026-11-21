@@ -1,0 +1,59 @@
+name: Test Antigravity
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test-agy:
+    name: Test Antigravity
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: '3.11'
+      - run: |
+          uv tool install .
+          uv tool dir --bin >> "$GITHUB_PATH"
+      # The official installer verifies the binary's checksum against the release manifest.
+      # nosemgrep: yaml.github-actions.security.gha-curl-pipe-shell.gha-curl-pipe-shell
+      - run: |
+          curl -fsSL https://antigravity.google/cli/install.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - run: |
+          {
+            echo "- $(run-agent --version)"
+            echo "- $(agy --version)"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+      - timeout-minutes: 10
+        env:
+          GEMINI_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          MODEL: ${{ vars.GOOGLE_MODEL }}
+          EFFORT: ${{ vars.GOOGLE_EFFORT }}
+        run: |
+          # agy reads GEMINI_API_KEY only with the Gemini provider.
+          mkdir -p ~/.gemini/antigravity-cli
+          echo '{"modelProvider": "gemini"}' > ~/.gemini/antigravity-cli/settings.json
+          mkdir "$RUNNER_TEMP/workspace"
+          cd "$RUNNER_TEMP/workspace"
+          # The agent must run the script: it can't compute the token by itself.
+          nonce=$(openssl rand -hex 8)
+          printf 'import hashlib\nopen("token.txt", "w").write(hashlib.sha256(b"%s").hexdigest())\n' "$nonce" > make_token.py
+          run-agent agy ${MODEL:+--model "$MODEL"} ${EFFORT:+--effort "$EFFORT"} "Run python3 make_token.py."
+          test "$(cat token.txt)" = "$(printf '%s' "$nonce" | sha256sum | cut -d ' ' -f 1)"
