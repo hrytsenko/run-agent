@@ -23,3 +23,7 @@ A run passes the user's prompt to the agent as the task. It keeps the agent's ow
 ### Workspace-scoped permissions by default
 
 By default, a run lets the agent edit files and run sandboxed commands in the working directory, and has whatever else would need approval denied rather than waited on. Each runner picks its CLI's closest mode, and a mode must end the run instead of blocking on a prompt. `yolo` lifts every check and sandbox, and only through each CLI's own bypass flag. When a CLI reports a denied run as a success, its runner turns the outcome into a failure.
+
+## Testing
+
+A `test-<agent>.yml` workflow per agent covers the real run: it installs the agent's latest CLI and gives `run-agent` a task with the default permissions. The task runs a script that writes the hash of a random nonce, and the workflow checks it, so the agent must run a command in the workspace: it can't produce the token by itself. The prompt names the exact command, so a failure points at the run, such as an approval, the sandbox or the headless instructions, not at the agent's guesswork.
