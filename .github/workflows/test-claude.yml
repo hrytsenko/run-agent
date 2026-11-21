@@ -1,0 +1,56 @@
+name: Test Claude
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test-claude:
+    name: Test Claude
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: '3.11'
+      - name: Install run-agent
+        run: |
+          uv tool install .
+          uv tool dir --bin >> "$GITHUB_PATH"
+      - name: Install Claude Code
+        run: npm install --global @anthropic-ai/claude-code@latest # zizmor: ignore[adhoc-packages] test the latest release
+      - name: Show versions
+        run: |
+          {
+            echo "- $(run-agent --version)"
+            echo "- $(claude --version)"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Run a task
+        timeout-minutes: 10
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MODEL: ${{ vars.ANTHROPIC_MODEL }}
+          EFFORT: ${{ vars.ANTHROPIC_EFFORT }}
+        run: |
+          mkdir "$RUNNER_TEMP/workspace"
+          cd "$RUNNER_TEMP/workspace"
+          # The agent must run the script: it can't compute the token by itself.
+          nonce=$(openssl rand -hex 8)
+          printf 'import hashlib\nopen("token.txt", "w").write(hashlib.sha256(b"%s").hexdigest())\n' "$nonce" > make_token.py
+          run-agent claude ${MODEL:+--model "$MODEL"} ${EFFORT:+--effort "$EFFORT"} "Run python3 make_token.py."
+          test "$(cat token.txt)" = "$(printf '%s' "$nonce" | sha256sum | cut -d ' ' -f 1)"
