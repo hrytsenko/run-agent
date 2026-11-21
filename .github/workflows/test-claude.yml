@@ -28,20 +28,16 @@ jobs:
       - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
           python-version: '3.11'
-      - name: Install run-agent
-        run: |
+      - run: |
           uv tool install .
           uv tool dir --bin >> "$GITHUB_PATH"
-      - name: Install Claude Code
-        run: npm install --global @anthropic-ai/claude-code@latest # zizmor: ignore[adhoc-packages] test the latest release
-      - name: Show versions
-        run: |
+      - run: npm install --global @anthropic-ai/claude-code@latest # zizmor: ignore[adhoc-packages] test the latest release
+      - run: |
           {
             echo "- $(run-agent --version)"
             echo "- $(claude --version)"
           } | tee -a "$GITHUB_STEP_SUMMARY"
-      - name: Run a task
-        timeout-minutes: 10
+      - timeout-minutes: 10
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           MODEL: ${{ vars.ANTHROPIC_MODEL }}
